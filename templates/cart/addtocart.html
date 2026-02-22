@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% block title %} Add To Cart {% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .cart-container {
+        width: 100%; /* Full width for phone view */
+        margin: 10px auto;
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 15px;
+        max-height: auto;
+        overflow-y: auto;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 1.8rem; /* Responsive heading size */
+    }
+
+    .cart-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+
+    .cart-item img {
+        width: 80px; /* Smaller image for phone view */
+        height: auto;
+        margin-right: 10px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+    }
+
+    .item-details {
+        flex-grow: 1;
+    }
+
+    .item-details h3 {
+        margin: 0;
+        font-size: 1rem; /* Smaller font for phone view */
+    }
+
+    .item-details p {
+        margin: 5px 0;
+    }
+
+    .item-details .price {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .item-details label {
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .item-details input[type="number"] {
+        width: 60px;
+        padding: 5px;
+        margin-left: 10px;
+    }
+
+    .remove-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: auto; /* Align remove button to the right */
+    }
+
+    .remove-btn:hover {
+        background-color: #c82333;
+    }
+
+    .checkout-btn,
+    .shopnow-btn {
+        display: block;
+        width: 90%; /* Full width with some margin for better look */
+        margin: 20px auto;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.1rem; /* Adjusted for readability */
+        text-align: center;
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+        transition: color 0.7s ease-in-out;
+    }
+
+    .checkout-btn {
+        background: linear-gradient(to left, #ecb3e7, #e8ed93);
+        color: rgb(40, 5, 83);
+    }
+
+    .checkout-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, #ecb3e7, #e8ed93);
+        z-index: -1;
+        transition: transform 0.7s ease-in-out;
+        transform: scaleX(0);
+        transform-origin: left;
+    }
+
+    .checkout-btn:hover::before {
+        transform: scaleX(1);
+    }
+
+    .checkout-btn:hover {
+        color: rgb(106, 0, 0);
+    }
+
+    .shopnow-btn {
+        background: linear-gradient(to right, #eb06ef, #ffffff);
+        color: rgb(40, 5, 83);
+    }
+
+    .shopnow-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to left, #eb06ef, #ffffff);
+        z-index: -1;
+        transition: transform 0.7s ease-in-out;
+        transform: scaleX(0);
+        transform-origin: left;
+    }
+
+    .shopnow-btn:hover::before {
+        transform: scaleX(1);
+    }
+
+    .shopnow-btn:hover {
+        color: rgb(106, 0, 0);
+    }
+
+    @media (max-width: 600px) {
+        .cart-item {
+            flex-direction: row; /* Keep image and name in a single row */
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cart-item img {
+            width: 60px; /* Smaller image for phone view */
+            margin-right: 10px;
+        }
+
+        .remove-btn {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+
+
+
+<div class="cart-container">
+    <div style="padding: 20px; width: auto;">
+    <h1 style="font-size: xx-large;">Your Cart</h1></div>
+    {% if item %}
+    <!-- Loop through the cart items -->
+    {% for x in item %}
+    <div class="cart-item">
+        <img src="{{ x.product.img.url }}" alt="{{ x.product.name }}">
+        <div class="item-details">
+            <h3>{{ x.product }}</h3>
+            <p class="price">₹{{ x.price }}</p>
+            <p>Size: {{ x.size }}</p>
+            <p>Color: {{ x.color }}</p>
+            <div>
+                <label for="qty{{ forloop.counter }}">Quantity:</label>
+                <input type="number" id="qty{{ forloop.counter }}" name="qty{{ forloop.counter }}" class="item-qty" data-id="{{ x.id }}" value="{{ x.qty }}" min="1">
+            </div>
+        </div>
+        <a href="{% url 'deletecart' x.id %}"><button class="remove-btn">Remove</button></a>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div style="height: 50vh;text-align: center;">
+        <br><br><br>
+        <p style="font-size: x-large;">You haven't added any items</p>
+    </div>
+    <center><a href="/#shop"> <button class="checkout-btn" style="background-color: orange;">Shop Now</button></a></center>
+    {% endif %}
+</div>
+{% if item %}
+<div class="cart-container1">
+   <center> <a href="{% url 'checkout' %}"><button class="checkout-btn">Proceed to Checkout</button></a></center>
+</div>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Event listener for quantity input changes
+        document.querySelectorAll('.item-qty').forEach(input => {
+            input.addEventListener('change', function () {
+                const itemId = this.getAttribute('data-id');
+                const newQuantity = this.value;
+
+                // Update quantity in the database via AJAX
+                updateCartQuantity(itemId, newQuantity);
+            });
+        });
+
+        function updateCartQuantity(itemId, quantity) {
+            fetch('/cart/update_quantity/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token
+                },
+                body: JSON.stringify({ 'item_id': itemId, 'quantity': quantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Quantity updated successfully.');
+                } else {
+                    alert('Error updating quantity.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    });
+</script>
+
+
+{% endblock %}

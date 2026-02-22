@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/orders.css">
+
+<div class="container orders-container">
+    <h1 class="orders-title">My Orders</h1>
+    {% if orders %}
+        {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <h2>Order ID: {{ order.order_id }}</h2>
+                    <p>Ordered on: {{ order.created_at|date:"F d, Y H:i" }}</p>
+                    <p>Total Amount: ₹{{ order.total_amount }}</p>
+                </div>
+                <div class="shipping-info">
+                    <h3>Shipping Address:</h3>
+                    <p>{{ order.address.name }}</p>
+                    <p>{{ order.address.phone }}</p>
+                    <p>{{ order.address.address }}, {{ order.address.city }}, {{ order.address.country }}</p>
+                </div>
+                <div class="order-items">
+                    <h3>Items:</h3>
+                    {% for item in order.items.all %}
+                        <div class="order-item">
+                            <img src="{{ item.product.img.url }}" alt="{{ item.product.name }}" class="product-image">
+                            <div class="item-details">
+                                <p class="product-name">{{ item.product.name }}</p>
+                                <p>Size: {{ item.size }}</p>
+                                <p>Color: {{ item.color }}</p>
+                                <p>Quantity: {{ item.qty }}</p>
+                                <p>Price: ₹{{ item.price }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You have no orders yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
